@@ -1,0 +1,34 @@
+version: '3'
+services:
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes: 
+      - .:/code
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASS: ${POSTGRES_PASSWORD}
+      DATABASE_NAME: app
+      
+    ports:
+      - 8080:8080
+    tty: true
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: app
+    volumes:
+      - dev-disk:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+volumes:
+  dev-disk:
